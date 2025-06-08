@@ -16,7 +16,7 @@ $('#signup-btn').on('click', function() {
            uLName : lName,
            uEmail : email,
            uPhone : phone,
-           uPassword: password,
+           uPassword: password
        }) ,
         success: function (response) {
            console.log(response);
