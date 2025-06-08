@@ -34,4 +34,8 @@ $('#sign-in-btn').on('click', function(){
            alert('Error: Incorrect email or password');
         }
     });
+
+    $('#email').val('');
+    $('#password').val('');
+
 });
