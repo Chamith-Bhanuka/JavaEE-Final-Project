@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Employee Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-speedometer2"></i>
+            Employee Management
+        </a>
+
+        <div class="navbar-nav ms-auto">
+            <a href="#" class="user-menu">
+                <i class="bi bi-person-circle"></i>
+                Sign Out
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome back, John!</h1>
+            <p class="welcome-subtitle">Here's what's happening with your team today.</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card">
+                    <div class="stats-icon primary">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="stats-number">24</div>
+                    <div class="stats-label">Total Employees</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card">
+                    <div class="stats-icon success">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="stats-number">18</div>
+                    <div class="stats-label">Present Today</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card">
+                    <div class="stats-icon warning">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
+                    <div class="stats-number">3</div>
+                    <div class="stats-label">On Leave</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card">
+                    <div class="stats-icon info">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <div class="stats-number">5</div>
+                    <div class="stats-label">New This Month</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Quick Actions -->
+            <div class="col-lg-6">
+                <div class="quick-actions">
+                    <h3 class="section-title">Quick Actions</h3>
+                    <a href="#" class="action-btn">
+                        <i class="bi bi-person-plus"></i>
+                        <span>Add New Employee</span>
+                    </a>
+                    <a href="#" class="action-btn">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>View Attendance</span>
+                    </a>
+                    <a href="#" class="action-btn">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>Generate Report</span>
+                    </a>
+                    <a href="#" class="action-btn">
+                        <i class="bi bi-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="col-lg-6">
+                <div class="quick-actions">
+                    <h3 class="section-title">Recent Activity</h3>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">New employee Sarah Johnson added</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Monthly attendance report generated</div>
+                            <div class="activity-time">5 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-person-x"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Employee Mike Wilson marked absent</div>
+                            <div class="activity-time">1 day ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-gear"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">System settings updated</div>
+                            <div class="activity-time">2 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../lib/jquery-3.7.1.min.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>
