@@ -26,7 +26,7 @@
             <label class="form-label">First Name</label>
             <div class="input-group">
               <i class="bi bi-person-fill input-icon"></i>
-              <input type="text" class="form-control" placeholder="First name" required>
+                <input type="text" class="form-control" placeholder="First name" id="fName" required>
             </div>
           </div>
         </div>
@@ -35,7 +35,7 @@
             <label class="form-label">Last Name</label>
             <div class="input-group">
               <i class="bi bi-person-fill input-icon"></i>
-              <input type="text" class="form-control" placeholder="Last name" required>
+              <input type="text" class="form-control" placeholder="Last name" id="lName" required>
             </div>
           </div>
         </div>
@@ -45,7 +45,7 @@
         <label class="form-label">Email Address</label>
         <div class="input-group">
           <i class="bi bi-envelope-fill input-icon"></i>
-          <input type="email" class="form-control" placeholder="Enter your email" required>
+          <input type="email" class="form-control" placeholder="Enter your email" id="email" required>
         </div>
       </div>
 
@@ -53,7 +53,7 @@
         <label class="form-label">Phone Number</label>
         <div class="input-group">
           <i class="bi bi-telephone-fill input-icon"></i>
-          <input type="tel" class="form-control" placeholder="Enter your phone number" required>
+          <input type="tel" class="form-control" placeholder="Enter your phone number" id="phone" required>
         </div>
       </div>
 
@@ -63,7 +63,7 @@
             <label class="form-label">Password</label>
             <div class="input-group">
               <i class="bi bi-lock-fill input-icon"></i>
-              <input type="password" class="form-control" placeholder="Create password" required>
+              <input type="password" class="form-control" placeholder="Create password" id="password" required>
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@
         </label>
       </div>
 
-      <button type="submit" class="btn btn-primary">
+      <button type="button" class="btn btn-primary" id="signup-btn">
         <i class="bi bi-person-check me-2"></i>Create Account
       </button>
 
@@ -96,5 +96,8 @@
     </form>
   </div>
 </div>
+
+<script src="../lib/jquery-3.7.1.min.js"></script>
+<script src="../js/signUp.js"></script>
 </body>
 </html>
