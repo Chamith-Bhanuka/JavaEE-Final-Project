@@ -9,7 +9,7 @@ $('#signup-btn').on('click', function() {
 
     $.ajax({
        method: 'POST',
-       url: '',
+       url: 'http://localhost:8080/JavaEE_Final_Project_EMS_Backend_Web_exploded//api/v1/signup',
        contentType: "application/json",
        data: JSON.stringify({
            uFname : fName,
@@ -21,9 +21,9 @@ $('#signup-btn').on('click', function() {
         success: function (response) {
            console.log(response);
 
-           if (response.status === 200) {
+           if (response.status === "success") {
                alert('User successfully created');
-               window.location.href = '../pages'
+               window.location.href = '../pages/signIn.html';
            } else {
                alert('Error: ' + response.status);
            }
