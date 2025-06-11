@@ -14,7 +14,7 @@ $('#sign-in-btn').on('click', function(){
 
     $.ajax({
        method: 'POST',
-       url: 'http://localhost:8080/JavaEE_Final_Project_EMS_Backend_Web_exploded//api/v1/signin',
+       url: 'http://localhost:8080/JavaEE_Final_Project_EMS_Backend_Web_exploded/api/v1/signin',
        contentType: 'application/json',
        data: JSON.stringify({
            uemail: email,

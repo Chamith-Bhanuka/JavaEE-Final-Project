@@ -6,9 +6,429 @@
   <title>Employee Management System</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../styles/employee.css">
+  <style>
+    :root {
+      --dark-bg: #0f1419;
+      --dark-card: #1e2328;
+      --dark-surface: #252b32;
+      --dark-border: #3c434a;
+      --primary-color: #4f9cf9;
+      --primary-hover: #3182f6;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --text-primary: #ffffff;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --accent-blue: #0ea5e9;
+      --accent-purple: #8b5cf6;
+      --text-light: #f8f9fa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f1419 0%, #1a202c 100%);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .main-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .header-section {
+      background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-surface) 100%);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 0;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .header-title i {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+    }
+
+    .content-section {
+      background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-surface) 100%);
+      border: 1px solid var(--dark-border);
+      border-radius: 16px;
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-section {
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .search-input {
+      background: var(--dark-surface);
+      border: 2px solid var(--dark-border);
+      color: var(--text-primary);
+      border-radius: 12px;
+      padding: 14px 50px 14px 16px;
+      width: 100%;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      background: var(--dark-card);
+      box-shadow: 0 0 0 3px rgba(79, 156, 249, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-container {
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary-color);
+      font-size: 16px;
+    }
+
+    .table-container {
+      flex: 1;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--dark-border);
+      background: var(--dark-surface);
+    }
+
+    .table-wrapper {
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .table {
+      margin-bottom: 0;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .table thead th {
+      background: linear-gradient(135deg, var(--dark-bg) 0%, #1a202c 100%);
+      border-color: var(--dark-border);
+      color: var(--text-primary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 16px 12px;
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .table tbody td {
+      background: var(--dark-surface);
+      border-color: var(--dark-border);
+      padding: 14px 12px;
+      vertical-align: middle;
+      color: var(--text-secondary);
+    }
+
+    .table tbody tr:hover {
+      background: rgba(79, 156, 249, 0.08);
+    }
+
+    .table tbody tr:hover td {
+      background: rgba(79, 156, 249, 0.08);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 6px;
+      margin: 0 2px;
+    }
+
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-outline-danger {
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .btn-outline-danger:hover {
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+      color: white;
+    }
+
+    .btn-outline-info {
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+    }
+
+    .btn-outline-info:hover {
+      background-color: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: white;
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+    }
+
+    .modal-content {
+      background-color: var(--dark-card);
+      border: 1px solid var(--dark-border);
+      color: var(--text-light);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid var(--dark-border);
+      background-color: var(--dark-bg);
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--dark-border);
+      background-color: var(--dark-bg);
+    }
+
+    .form-control, .form-select {
+      background-color: var(--dark-bg);
+      border: 1px solid var(--dark-border);
+      color: var(--text-light);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+
+    .form-control:focus, .form-select:focus {
+      background-color: var(--dark-bg);
+      border-color: var(--primary-color);
+      color: var(--text-light);
+      box-shadow: 0 0 0 2px rgba(79, 156, 249, 0.25);
+    }
+
+    .form-label {
+      color: var(--text-light);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 15px;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+    }
+
+    .floating-add-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .floating-add-btn:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .employee-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #dee2e6;
+    }
+
+    .employee-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #photoPreview {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid #dee2e6;
+      margin-top: 10px;
+    }
+
+    #photoPlaceholder {
+      width: 200px;
+      height: 150px;
+      border: 2px dashed var(--dark-border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .alert {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1060;
+      min-width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .table-wrapper::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+      background: var(--dark-bg);
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: var(--dark-border);
+      border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 10px;
+        gap: 15px;
+      }
+
+      .header-section {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .table thead th,
+      .table tbody td {
+        padding: 8px 5px;
+        font-size: 13px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .floating-add-btn {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 18px;
+      }
+
+      .alert {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+      }
+
+      .employee-photo {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  </style>
 </head>
 <body>
+
 <div class="main-container">
   <!-- Header -->
   <div class="header-section">
@@ -37,10 +457,7 @@
         <table class="table table-hover">
           <thead>
           <tr>
-            <th>ID</th>
-            <th>Photo</th>
-            <th>Full Name</th>
-            <th>Mobile</th>
+            <th>Employee</th>
             <th>Address</th>
             <th>Department</th>
             <th>Status</th>
@@ -79,67 +496,51 @@
       <div class="modal-body">
         <form id="employeeForm">
           <div class="row">
-            <div class="col-md-8">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Employee ID</label>
-                  <input type="text" class="form-control" id="employeeId" required readonly>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Full Name</label>
-                  <input type="text" class="form-control" id="employeeName" required>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Mobile Number</label>
-                  <input type="tel" class="form-control" id="employeeMobile" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Department</label>
-                  <select class="form-select" id="employeeDepartment" required>
-                    <option value="">Select Department</option>
-                    <option value="Human Resources">Human Resources</option>
-                    <option value="Information Technology">Information Technology</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Operations">Operations</option>
-                    <option value="Sales">Sales</option>
-                  </select>
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Address</label>
-                <textarea class="form-control" id="employeeAddress" rows="2" required></textarea>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Status</label>
-                <select class="form-select" id="employeeStatus" required>
-                  <option value="">Select Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="employeeName" required>
             </div>
-            <div class="col-md-4">
-              <div class="mb-3">
-                <label class="form-label">Employee Photo</label>
-                <div class="photo-upload-container flex-column">
-                  <div class="photo-placeholder" id="photoPlaceholder">
-                    <i class="bi bi-camera" style="font-size: 2rem;"></i>
-                  </div>
-                  <img id="photoPreview" class="photo-preview" alt="Employee Photo">
-                  <div class="file-input-wrapper">
-                    <input type="file" id="employeePhoto" accept="image/*" onchange="previewPhoto(this)">
-                    <label for="employeePhoto" class="file-input-label">
-                      <i class="bi bi-upload me-1"></i>Upload Photo
-                    </label>
-                  </div>
-                  <button type="button" class="btn btn-outline-danger btn-sm mt-2" id="removePhotoBtn" onclick="removePhoto()" style="display: none;">
-                    <i class="bi bi-trash me-1"></i>Remove
-                  </button>
-                </div>
-              </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Mobile Number</label>
+              <input type="tel" class="form-control" id="employeeMobile" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" id="employeeAddress" rows="2" required></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Department</label>
+              <select class="form-select" id="employeeDepartment" required>
+                <option value="">Select Department</option>
+                <option value="IT">Information Technology</option>
+                <option value="HR">Human Resources</option>
+                <option value="Finance">Finance</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Operations">Operations</option>
+                <option value="Sales">Sales</option>
+                <option value="Administration">Administration</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="employeeStatus" required>
+                <option value="">Select Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Terminated">Terminated</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Employee Photo</label>
+            <input type="file" class="form-control" id="employeePhoto" accept="image/*">
+            <img id="photoPreview" style="display: none;">
+            <div id="photoPlaceholder">
+              <i class="bi bi-camera" style="font-size: 2rem;"></i><br>
+              No photo selected
             </div>
           </div>
         </form>
@@ -149,6 +550,49 @@
         <button type="button" class="btn btn-success" id="saveButton" onclick="saveEmployee()">
           Save Employee
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Employee Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-eye-fill me-2"></i>Employee Details
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4 text-center">
+            <img id="viewEmployeePhoto" class="img-fluid rounded-circle mb-3" style="max-width: 150px; max-height: 150px; object-fit: cover;" alt="Employee Photo">
+          </div>
+          <div class="col-md-8">
+            <h4 id="viewEmployeeName" class="mb-3"></h4>
+            <div class="row mb-2">
+              <div class="col-sm-4"><strong>Mobile:</strong></div>
+              <div class="col-sm-8" id="viewEmployeeMobile"></div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-sm-4"><strong>Address:</strong></div>
+              <div class="col-sm-8" id="viewEmployeeAddress"></div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-sm-4"><strong>Department:</strong></div>
+              <div class="col-sm-8" id="viewEmployeeDepartment"></div>
+            </div>
+            <div class="row mb-2">
+              <div class="col-sm-4"><strong>Status:</strong></div>
+              <div class="col-sm-8" id="viewEmployeeStatus"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -169,6 +613,7 @@
         <div class="alert alert-warning" role="alert">
           <strong>Employee:</strong> <span id="deleteEmployeeName"></span>
         </div>
+        <p class="text-muted small">This action cannot be undone.</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -181,6 +626,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>-->
 <script src="../lib/jquery-3.7.1.min.js"></script>
 <script src="../js/employee.js"></script>
 </body>

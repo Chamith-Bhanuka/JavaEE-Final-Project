@@ -1,204 +1,341 @@
-let employees = [];
-let currentEditId = null;
-let employeeIdCounter = 1001;
+$(document).ready(function() {
+    const apiUrl = 'http://localhost:8080/JavaEE_Final_Project_EMS_Backend_Web_exploded/api/v1/employees';
+    let currentEditId = null;
+    let allEmployees = [];
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadSampleData();
-    renderTable();
+    // Load employees on page load
+    loadEmployees();
 
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const filteredEmployees = employees.filter(employee =>
+    // Setup search functionality
+    $('#searchInput').on('input', function() {
+        const searchTerm = $(this).val().toLowerCase();
+        const filteredEmployees = allEmployees.filter(employee =>
             employee.name.toLowerCase().includes(searchTerm) ||
-            employee.id.toLowerCase().includes(searchTerm) ||
+            employee.mobile.toLowerCase().includes(searchTerm) ||
             employee.department.toLowerCase().includes(searchTerm) ||
-            employee.mobile.toLowerCase().includes(searchTerm)
+            employee.address.toLowerCase().includes(searchTerm) ||
+            employee.status.toLowerCase().includes(searchTerm)
         );
-        renderTable(filteredEmployees);
+        refreshTable(filteredEmployees);
     });
-});
 
-function loadSampleData() {
-    employees = [
-        {
-            id: 'EMP1001',
-            name: 'John Smith',
-            mobile: '+1-555-0123',
-            address: '123 Main St, New York, NY 10001',
-            department: 'Information Technology',
-            status: 'Active',
-            photo: null
-        },
-        {
-            id: 'EMP1002',
-            name: 'Sarah Johnson',
-            mobile: '+1-555-0456',
-            address: '456 Oak Ave, Los Angeles, CA 90210',
-            department: 'Human Resources',
-            status: 'Active',
-            photo: null
-        },
-        {
-            id: 'EMP1003',
-            name: 'Michael Brown',
-            mobile: '+1-555-0789',
-            address: '789 Pine Rd, Chicago, IL 60601',
-            department: 'Finance',
-            status: 'Inactive',
-            photo: null
+    // Photo preview functionality
+    $('#employeePhoto').on('change', function() {
+        const file = this.files[0];
+        const preview = $('#photoPreview');
+        const placeholder = $('#photoPlaceholder');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.attr('src', e.target.result).show();
+                placeholder.hide();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.hide();
+            placeholder.show();
         }
-    ];
-    employeeIdCounter = 1004;
-}
+    });
 
-function renderTable(employeesToRender = employees) {
-    const tbody = document.getElementById('employeeTableBody');
-    const noDataMessage = document.getElementById('noDataMessage');
-
-    if (employeesToRender.length === 0) {
-        tbody.innerHTML = '';
-        noDataMessage.style.display = 'block';
-        return;
+    // Load employees from backend
+    function loadEmployees() {
+        $.ajax({
+            url: apiUrl,
+            method: 'GET',
+            success: function(response) {
+                allEmployees = response || [];
+                refreshTable(allEmployees);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading employees:', error);
+                showAlert('Error loading employees', 'error');
+            }
+        });
     }
 
-    noDataMessage.style.display = 'none';
+    // Refresh table with data
+    function refreshTable(data) {
+        const tbody = $('#employeeTableBody');
+        const noDataMessage = $('#noDataMessage');
 
-    tbody.innerHTML = employeesToRender.map(employee => `
+        if (!data || data.length === 0) {
+            tbody.empty();
+            noDataMessage.show();
+            return;
+        }
+
+        noDataMessage.hide();
+        tbody.empty();
+
+        data.forEach(employee => {
+            const statusBadge = getStatusBadge(employee.status);
+            const departmentBadge = getDepartmentBadge(employee.department);
+
+            const photoUrl = employee.photoUrl ?
+                ('http://localhost:8080' + employee.photoUrl) :
+                getDefaultPhotoUrl();
+
+            console.log("main photo url: ", photoUrl);
+
+            tbody.append(`
                 <tr>
-                    <td><span class="badge badge-id">${employee.id}</span></td>
                     <td>
-                        ${employee.photo
-        ? `<img src="${employee.photo}" alt="${employee.name}" class="employee-photo">`
-        : `<div class="employee-photo" style="background-color: var(--dark-surface); display: flex; align-items: center; justify-content: center; color: var(--text-muted);"><i class="bi bi-person"></i></div>`
-    }
+                        <div class="d-flex align-items-center">
+                            <img src="${photoUrl}" 
+                                 alt="${employee.name}" 
+                                 class="employee-photo me-2"
+                                 onerror="this.src='${getDefaultPhotoUrl()}'">
+                            <div>
+                                <div class="fw-semibold">${employee.name}</div>
+                                <small class="text-muted">${employee.mobile}</small>
+                            </div>
+                        </div>
                     </td>
-                    <td>${employee.name}</td>
-                    <td>${employee.mobile}</td>
                     <td>${employee.address}</td>
-                    <td><span class="badge badge-department">${employee.department}</span></td>
-                    <td><span class="badge ${employee.status === 'Active' ? 'badge-active' : 'badge-inactive'}">${employee.status}</span></td>
+                    <td>${departmentBadge}</td>
+                    <td>${statusBadge}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-success btn-sm" onclick="editEmployee('${employee.id}')" title="Edit">
+                            <button class="btn btn-sm btn-outline-primary" onclick="editEmployee(${employee.id})" title="Edit">
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteEmployee('${employee.id}')" title="Delete">
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee(${employee.id})" title="Delete">
                                 <i class="bi bi-trash-fill"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-info" onclick="viewEmployee(${employee.id})" title="View Details">
+                                <i class="bi bi-eye-fill"></i>
                             </button>
                         </div>
                     </td>
                 </tr>
-            `).join('');
-}
-
-function openAddModal() {
-    currentEditId = null;
-    document.getElementById('modalTitle').innerHTML = '<i class="bi bi-person-plus-fill me-2"></i>Add Employee';
-    document.getElementById('saveButton').textContent = 'Save Employee';
-    document.getElementById('employeeForm').reset();
-    document.getElementById('employeeId').value = `EMP${employeeIdCounter}`;
-
-    // Reset photo preview
-    document.getElementById('photoPreview').style.display = 'none';
-    document.getElementById('photoPlaceholder').style.display = 'flex';
-    document.getElementById('removePhotoBtn').style.display = 'none';
-
-    new bootstrap.Modal(document.getElementById('employeeModal')).show();
-}
-
-function editEmployee(id) {
-    const employee = employees.find(e => e.id === id);
-    if (!employee) return;
-
-    currentEditId = id;
-    document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil-fill me-2"></i>Edit Employee';
-    document.getElementById('saveButton').textContent = 'Update Employee';
-
-    document.getElementById('employeeId').value = employee.id;
-    document.getElementById('employeeName').value = employee.name;
-    document.getElementById('employeeMobile').value = employee.mobile;
-    document.getElementById('employeeAddress').value = employee.address;
-    document.getElementById('employeeDepartment').value = employee.department;
-    document.getElementById('employeeStatus').value = employee.status;
-
-    // Handle photo preview
-    if (employee.photo) {
-        document.getElementById('photoPreview').src = employee.photo;
-        document.getElementById('photoPreview').style.display = 'block';
-        document.getElementById('photoPlaceholder').style.display = 'none';
-        document.getElementById('removePhotoBtn').style.display = 'block';
-    } else {
-        document.getElementById('photoPreview').style.display = 'none';
-        document.getElementById('photoPlaceholder').style.display = 'flex';
-        document.getElementById('removePhotoBtn').style.display = 'none';
+            `);
+        });
     }
 
-    new bootstrap.Modal(document.getElementById('employeeModal')).show();
-}
+    // Get default photo URL (base64 encoded placeholder)
+    function getDefaultPhotoUrl() {
+        return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2Yzc1N2QiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42ODYyOSAxNCA2IDE2LjY4NjMgNiAyMFYyMkgxOFYyMEMxOCAxNi42ODYzIDE1LjMxMzcgMTQgMTIgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+';
+    }
 
-function previewPhoto(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('photoPreview').src = e.target.result;
-            document.getElementById('photoPreview').style.display = 'block';
-            document.getElementById('photoPlaceholder').style.display = 'none';
-            document.getElementById('removePhotoBtn').style.display = 'block';
+    // Get status badge HTML
+    function getStatusBadge(status) {
+        const statusClasses = {
+            'Active': 'badge bg-success',
+            'Inactive': 'badge bg-secondary',
+            'On Leave': 'badge bg-warning text-dark',
+            'Terminated': 'badge bg-danger'
         };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function removePhoto() {
-    document.getElementById('employeePhoto').value = '';
-    document.getElementById('photoPreview').style.display = 'none';
-    document.getElementById('photoPlaceholder').style.display = 'flex';
-    document.getElementById('removePhotoBtn').style.display = 'none';
-}
-
-function saveEmployee() {
-    const form = document.getElementById('employeeForm');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
+        const className = statusClasses[status] || 'badge bg-secondary';
+        return `<span class="${className}">${status}</span>`;
     }
 
-    const photoElement = document.getElementById('photoPreview');
-    const photoSrc = photoElement.style.display === 'block' ? photoElement.src : null;
+    // Get department badge HTML
+    function getDepartmentBadge(department) {
+        const colors = ['primary', 'info', 'warning', 'success', 'danger'];
+        const hash = department.split('').reduce((a, b) => {
+            a = ((a << 5) - a) + b.charCodeAt(0);
+            return a & a;
+        }, 0);
+        const colorIndex = Math.abs(hash) % colors.length;
+        return `<span class="badge bg-${colors[colorIndex]}">${department}</span>`;
+    }
 
-    const employeeData = {
-        id: document.getElementById('employeeId').value,
-        name: document.getElementById('employeeName').value,
-        mobile: document.getElementById('employeeMobile').value,
-        address: document.getElementById('employeeAddress').value,
-        department: document.getElementById('employeeDepartment').value,
-        status: document.getElementById('employeeStatus').value,
-        photo: photoSrc
+    // Open add modal
+    window.openAddModal = function() {
+        currentEditId = null;
+        $('#modalTitle').html('<i class="bi bi-person-plus-fill me-2"></i>Add Employee');
+        $('#saveButton').text('Save Employee');
+        $('#employeeForm')[0].reset();
+        $('#photoPreview').hide();
+        $('#photoPlaceholder').show();
+        $('#employeeModal').modal('show');
     };
 
-    if (currentEditId) {
-        const index = employees.findIndex(e => e.id === currentEditId);
-        employees[index] = employeeData;
-    } else {
-        employees.push(employeeData);
-        employeeIdCounter++;
+    // Edit employee
+    window.editEmployee = function(id) {
+        const employee = allEmployees.find(e => e.id === id);
+        if (!employee) return;
+
+        currentEditId = id;
+        $('#modalTitle').html('<i class="bi bi-pencil-fill me-2"></i>Edit Employee');
+        $('#saveButton').text('Update Employee');
+
+        // Fill form fields
+        $('#employeeName').val(employee.name);
+        $('#employeeMobile').val(employee.mobile);
+        $('#employeeAddress').val(employee.address);
+        $('#employeeDepartment').val(employee.department);
+        $('#employeeStatus').val(employee.status);
+
+        // Show current photo if exists
+        if (employee.photoUrl) {
+            $('#photoPreview').attr('src', employee.photoUrl).show();
+            $('#photoPlaceholder').hide();
+        } else {
+            $('#photoPreview').hide();
+            $('#photoPlaceholder').show();
+        }
+
+        // Clear the file input
+        $('#employeePhoto').val('');
+
+        $('#employeeModal').modal('show');
+    };
+
+    // View employee details
+    window.viewEmployee = function(id) {
+        const employee = allEmployees.find(e => e.id === id);
+        if (!employee) return;
+
+        $('#viewEmployeeName').text(employee.name);
+        $('#viewEmployeeMobile').text(employee.mobile);
+        $('#viewEmployeeAddress').text(employee.address);
+        $('#viewEmployeeDepartment').text(employee.department);
+        $('#viewEmployeeStatus').html(getStatusBadge(employee.status));
+
+        if (employee.photoUrl) {
+            console.log('employee URL: ', employee.photoUrl);
+            $('#viewEmployeePhoto').attr('src', 'http://localhost:8080' + employee.photoUrl).show(); //need change here
+        } else {
+            $('#viewEmployeePhoto').attr('src', getDefaultPhotoUrl()).show();
+        }
+
+        $('#viewModal').modal('show');
+    };
+
+    // Save employee (add or update)
+    window.saveEmployee = function() {
+        const form = $('#employeeForm')[0];
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append('employeeName', $('#employeeName').val());
+        formData.append('employeeMobile', $('#employeeMobile').val());
+        formData.append('employeeAddress', $('#employeeAddress').val());
+        formData.append('employeeDepartment', $('#employeeDepartment').val());
+        formData.append('employeeStatus', $('#employeeStatus').val());
+
+        // Add photo if selected
+        const photoFile = $('#employeePhoto')[0].files[0];
+        if (photoFile) {
+            formData.append('employeePhoto', photoFile);
+        }
+
+        // Show loading state
+        const saveBtn = $('#saveButton');
+        const originalText = saveBtn.text();
+        saveBtn.prop('disabled', true).text('Saving...');
+
+        // Determine URL and method
+        const url = currentEditId ? `${apiUrl}/${currentEditId}` : apiUrl;
+        const method = currentEditId ? 'PUT' : 'POST';
+
+        $.ajax({
+            url: url,
+            method: method,
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#employeeModal').modal('hide');
+                loadEmployees();
+                showAlert(
+                    currentEditId ? 'Employee updated successfully!' : 'Employee added successfully!',
+                    'success'
+                );
+            },
+            error: function(xhr, status, error) {
+                console.error('Error saving employee:', error);
+                let errorMessage = 'Error saving employee';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                showAlert(errorMessage, 'error');
+            },
+            complete: function() {
+                saveBtn.prop('disabled', false).text(originalText);
+            }
+        });
+    };
+
+    // Delete employee
+    window.deleteEmployee = function(id) {
+        const employee = allEmployees.find(e => e.id === id);
+        if (!employee) return;
+
+        $('#deleteEmployeeName').text(employee.name);
+        $('#confirmDeleteBtn').off('click').on('click', () => confirmDelete(id));
+        $('#deleteModal').modal('show');
+    };
+
+    // Confirm delete
+    function confirmDelete(id) {
+        const deleteBtn = $('#confirmDeleteBtn');
+        const originalText = deleteBtn.text();
+        deleteBtn.prop('disabled', true).text('Deleting...');
+
+        $.ajax({
+            url: `${apiUrl}/${id}`,
+            method: 'DELETE',
+            success: function() {
+                $('#deleteModal').modal('hide');
+                loadEmployees();
+                showAlert('Employee deleted successfully!', 'success');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error deleting employee:', error);
+                let errorMessage = 'Error deleting employee';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                showAlert(errorMessage, 'error');
+            },
+            complete: function() {
+                deleteBtn.prop('disabled', false).text(originalText);
+            }
+        });
     }
 
-    bootstrap.Modal.getInstance(document.getElementById('employeeModal')).hide();
-    renderTable();
-}
+    // Show alert messages
+    function showAlert(message, type = 'info') {
+        const alertClass = type === 'success' ? 'alert-success' :
+            type === 'error' ? 'alert-danger' :
+                type === 'warning' ? 'alert-warning' : 'alert-info';
 
-function deleteEmployee(id) {
-    const employee = employees.find(e => e.id === id);
-    if (!employee) return;
+        const alertHtml = `
+            <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                <i class="bi bi-${type === 'success' ? 'check-circle' :
+            type === 'error' ? 'exclamation-triangle' :
+                type === 'warning' ? 'exclamation-triangle' : 'info-circle'}-fill me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
 
-    document.getElementById('deleteEmployeeName').textContent = employee.name;
-    document.getElementById('confirmDeleteBtn').onclick = () => confirmDelete(id);
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
+        // Remove existing alerts
+        $('.alert').remove();
 
-function confirmDelete(id) {
-    employees = employees.filter(e => e.id !== id);
-    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-    renderTable();
-}
+        // Add new alert at the top of the page
+        $('body').prepend(alertHtml);
+
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            $('.alert').fadeOut(() => $('.alert').remove());
+        }, 5000);
+    }
+
+    // Export functions for global access
+    window.employeeManager = {
+        loadEmployees,
+        openAddModal,
+        editEmployee,
+        deleteEmployee,
+        viewEmployee,
+        saveEmployee
+    };
+});
