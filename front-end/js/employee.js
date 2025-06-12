@@ -1,12 +1,20 @@
 $(document).ready(function() {
+    var email=localStorage.getItem('email');
+    if (!email) {
+
+        window.location.href = 'signin.html';
+    }else {
+        console.log('entering to employee page.!');
+    }
+});
+
+$(document).ready(function() {
     const apiUrl = 'http://localhost:8080/JavaEE_Final_Project_EMS_Backend_Web_exploded/api/v1/employees';
     let currentEditId = null;
     let allEmployees = [];
 
-    // Load employees on page load
     loadEmployees();
-
-    // Setup search functionality
+    
     $('#searchInput').on('input', function() {
         const searchTerm = $(this).val().toLowerCase();
         const filteredEmployees = allEmployees.filter(employee =>
@@ -88,7 +96,7 @@ $(document).ready(function() {
                                  onerror="this.src='${getDefaultPhotoUrl()}'">
                             <div>
                                 <div class="fw-semibold">${employee.name}</div>
-                                <small class="text-muted">${employee.mobile}</small>
+                                <small class="text-muted" style="color: #94a3b8 !important;">${employee.mobile}</small>
                             </div>
                         </div>
                     </td>
@@ -113,12 +121,12 @@ $(document).ready(function() {
         });
     }
 
-    // Get default photo URL (base64 encoded placeholder)
+
     function getDefaultPhotoUrl() {
         return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2Yzc1N2QiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC42ODYyOSAxNCA2IDE2LjY4NjMgNiAyMFYyMkgxOFYyMEMxOCAxNi42ODYzIDE1LjMxMzcgMTQgMTIgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+';
     }
 
-    // Get status badge HTML
+
     function getStatusBadge(status) {
         const statusClasses = {
             'Active': 'badge bg-success',
@@ -130,7 +138,7 @@ $(document).ready(function() {
         return `<span class="${className}">${status}</span>`;
     }
 
-    // Get department badge HTML
+
     function getDepartmentBadge(department) {
         const colors = ['primary', 'info', 'warning', 'success', 'danger'];
         const hash = department.split('').reduce((a, b) => {
@@ -204,7 +212,7 @@ $(document).ready(function() {
         $('#viewModal').modal('show');
     };
 
-    // Save employee (add or update)
+
     window.saveEmployee = function() {
         const form = $('#employeeForm')[0];
         if (!form.checkValidity()) {
@@ -212,7 +220,7 @@ $(document).ready(function() {
             return;
         }
 
-        // Create FormData for file upload
+
         const formData = new FormData();
         formData.append('employeeName', $('#employeeName').val());
         formData.append('employeeMobile', $('#employeeMobile').val());
@@ -220,18 +228,18 @@ $(document).ready(function() {
         formData.append('employeeDepartment', $('#employeeDepartment').val());
         formData.append('employeeStatus', $('#employeeStatus').val());
 
-        // Add photo if selected
+
         const photoFile = $('#employeePhoto')[0].files[0];
         if (photoFile) {
             formData.append('employeePhoto', photoFile);
         }
 
-        // Show loading state
+
         const saveBtn = $('#saveButton');
         const originalText = saveBtn.text();
         saveBtn.prop('disabled', true).text('Saving...');
 
-        // Determine URL and method
+
         const url = currentEditId ? `${apiUrl}/${currentEditId}` : apiUrl;
         const method = currentEditId ? 'PUT' : 'POST';
 

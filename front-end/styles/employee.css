@@ -184,24 +184,47 @@ body {
     margin: 0 2px;
 }
 
-.btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
-.btn-success:hover {
-    background-color: #218838;
-    border-color: #218838;
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.btn-outline-danger {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+}
+
+.btn-outline-info {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+.btn-outline-info:hover {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
 }
 
 .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
-
-.btn-danger:hover {
-    background-color: #c82333;
-    border-color: #c82333;
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
 }
 
 .btn-secondary {
@@ -237,7 +260,7 @@ body {
     background-color: var(--dark-bg);
     border-color: var(--primary-color);
     color: var(--text-light);
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 2px rgba(79, 156, 249, 0.25);
 }
 
 .form-label {
@@ -250,26 +273,6 @@ body {
     font-size: 11px;
     padding: 6px 10px;
     border-radius: 15px;
-}
-
-.badge-id {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.badge-department {
-    background-color: #17a2b8;
-    color: white;
-}
-
-.badge-active {
-    background-color: var(--success-color);
-    color: white;
-}
-
-.badge-inactive {
-    background-color: var(--danger-color);
-    color: white;
 }
 
 .no-data {
@@ -310,66 +313,67 @@ body {
 }
 
 .employee-photo {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--dark-border);
+    border: 2px solid #dee2e6;
 }
 
-.photo-upload-container {
+.employee-info {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
-.photo-preview {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+#photoPreview {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
     object-fit: cover;
-    border: 2px solid var(--dark-border);
-    display: none;
+    border: 2px solid #dee2e6;
+    margin-top: 10px;
 }
 
-.photo-placeholder {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: var(--dark-surface);
+#photoPlaceholder {
+    width: 200px;
+    height: 150px;
     border: 2px dashed var(--dark-border);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-muted);
-}
-
-.file-input-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-}
-
-.file-input-wrapper input[type=file] {
-    position: absolute;
-    left: -9999px;
-}
-
-.file-input-label {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
 
-.file-input-label:hover {
-    background-color: var(--primary-hover);
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1060;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Responsive adjustments */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--dark-border);
+    border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 @media (max-width: 768px) {
     .main-container {
         padding: 10px;
@@ -401,26 +405,14 @@ body {
         font-size: 18px;
     }
 
-    .employee-photo {
-        width: 40px;
-        height: 40px;
+    .alert {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
     }
-}
 
-/* Custom scrollbar */
-.table-wrapper::-webkit-scrollbar {
-    width: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-    background: var(--dark-bg);
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-    background: var(--dark-border);
-    border-radius: 4px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    .employee-photo {
+        width: 30px;
+        height: 30px;
+    }
 }
